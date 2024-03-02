@@ -151,6 +151,6 @@ public class DriveSubsystem extends SubsystemBase {
 		// This method will be called once per scheduler run
         System.out.println(//getLeftEncoderPosition() + " " + getRightEncoderPosition() +
                         gyro.getQuaternionW() + 
-                           " (" + gyro.getPitch() + " " + gyro.getYaw() + " " + gyro.getRoll() + " " +  gyro.getAngle() + ")");
+                           " (" + gyro.getPitch() + " " + gyro.getRoll() + " " + gyro.getYaw() + " " + gyro.getGyroFullScaleRangeDPS() + ")");
 	}
 }
