@@ -10,6 +10,7 @@ import frc.robot.commands.IntakeStopCommand;
 import frc.robot.commands.LauncherStartCommand;
 import frc.robot.commands.LauncherStopCommand;
 import frc.robot.commands.SetIntakePositionCommand;
+import frc.robot.commands.TurnToAngleCommand;
 import frc.robot.commands.auto.Autos;
 import frc.robot.commands.teleop.TankDriveCommand;
 import frc.robot.subsystems.DriveSubsystem;
@@ -71,7 +72,9 @@ public class RobotContainer {
 		intakeAmpButton.onTrue(new SetIntakePositionCommand(m_intakeSubsystem, IntakePosition.AMP));
 		intakeDeployedButton.onTrue(new SetIntakePositionCommand(m_intakeSubsystem, IntakePosition.DEPLOYED));
 		intakeRetractedButton.onTrue(new SetIntakePositionCommand(m_intakeSubsystem, IntakePosition.RETRACTED));
-		intakeSourceButton.onTrue(new SetIntakePositionCommand(m_intakeSubsystem, IntakePosition.SOURCE));
+		// intakeSourceButton.onTrue(new SetIntakePositionCommand(m_intakeSubsystem, IntakePosition.SOURCE));
+
+		intakeSourceButton.onTrue(new TurnToAngleCommand(m_driveSubsystem, 180));
 
 		// Set intake.
 		intakeInButton

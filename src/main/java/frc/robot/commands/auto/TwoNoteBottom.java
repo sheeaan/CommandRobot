@@ -2,11 +2,8 @@ package frc.robot.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.commands.DriveDistanceCommand;
 import frc.robot.commands.IntakeStartCommand;
 import frc.robot.commands.IntakeStopCommand;
-import frc.robot.commands.LauncherStartCommand;
-import frc.robot.commands.LauncherStopCommand;
 import frc.robot.commands.SetIntakePositionCommand;
 import frc.robot.commands.TimedDriveCommand;
 import frc.robot.subsystems.DriveSubsystem;

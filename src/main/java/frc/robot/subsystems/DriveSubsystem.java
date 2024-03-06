@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -14,8 +13,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DrivetrainConstants;
@@ -30,7 +31,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 	// Other hardware.
 	private RelativeEncoder leftEncoder, rightEncoder;
-	private final AHRS gyro = new AHRS(SPI.Port.kMXP);
+	private AHRS gyro;
 
 	// Odometry and pose estimator for keeping track of position on field
 	private final Pose2d startPosition = new Pose2d(); // TODO update
@@ -64,18 +65,18 @@ public class DriveSubsystem extends SubsystemBase {
         rightEncoder = rightLeader.getEncoder();
         leftEncoder.setPosition(0);
         rightEncoder.setPosition(0);
-        leftEncoder.setPositionConversionFactor(2 * DrivetrainConstants.WHEEL_RADIUS_M * Math.PI / 8.5);
-		// gyro.reset();
 
-        gyro.enableBoardlevelYawReset(true);
-        // gyro.zeroYaw()
+        leftEncoder.setPositionConversionFactor(2 * DrivetrainConstants.WHEEL_RADIUS_M * Math.PI / 8.5);
+        rightEncoder.setPositionConversionFactor(2 * DrivetrainConstants.WHEEL_RADIUS_M * Math.PI / 8.5);
+
+        gyro = new AHRS(SPI.Port.kMXP);
+		gyro.reset();
 
 		// Create differential drivetrain.
 		drivetrain = new DifferentialDrive(leftLeader, rightLeader);
 
-		// TODO rotation 2D not correct
 		m_odometry = new DifferentialDriveOdometry(
-                new Rotation2d(gyro.getYaw()), leftEncoder.getPosition(), rightEncoder.getPosition(), 
+                new Rotation2d(gyro.getAngle()), leftEncoder.getPosition(), rightEncoder.getPosition(), 
                 startPosition);     // Initial pose of robot: default to x = 0, y = 0, theta = 0
 	}
 
@@ -148,9 +149,23 @@ public class DriveSubsystem extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		// This method will be called once per scheduler run
-        System.out.println(//getLeftEncoderPosition() + " " + getRightEncoderPosition() +
-                        gyro.getQuaternionW() + 
-                           " (" + gyro.getPitch() + " " + gyro.getRoll() + " " + gyro.getYaw() + " " + gyro.getGyroFullScaleRangeDPS() + ")");
+        m_odometry.update(gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
+
+        SmartDashboard.putNumber("Left Encoder", leftEncoder.getPosition());
+        SmartDashboard.putNumber("Right Encoder", rightEncoder.getPosition());
+
+        SmartDashboard.putNumber("Gyro Pitch", gyro.getPitch());
+        SmartDashboard.putNumber("Gyro Roll", gyro.getRoll());
+        SmartDashboard.putNumber("Gyro Angle", gyro.getAngle());
+
+        SmartDashboard.putString("Odometry", getFomattedPose());
 	}
+
+    public String getFomattedPose() {
+        var pose = getPose();
+        return String.format("(%.2f, %.2f) %.2f degrees", 
+                pose.getX(), 
+                pose.getY(),
+                pose.getRotation().getDegrees());
+    }
 }

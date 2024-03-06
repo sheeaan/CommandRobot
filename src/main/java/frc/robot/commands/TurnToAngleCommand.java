@@ -25,11 +25,13 @@ public class TurnToAngleCommand extends Command {
 
 	@Override
 	public void initialize() {
+		System.out.println(String.format("Turn to angle %.0f", m_target));
 		m_pidController.reset();
 	}
 
 	@Override
 	public void execute() {
+		System.out.println("Angle " + m_driveSubsystem.getGyroAngle());
 		double rot = m_pidController.calculate(m_driveSubsystem.getGyroAngle(), m_target);
 		m_driveSubsystem.setArcadeDrive(0, rot);
 	}
@@ -37,6 +39,7 @@ public class TurnToAngleCommand extends Command {
 	@Override
 	public void end(boolean interrupted) {
 		m_driveSubsystem.resetMotors();
+		System.out.println("Finished PID");
 	}
 
 	// One time command.
